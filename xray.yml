@@ -1,0 +1,91 @@
+# /usr/local/etc/xray/config.yml
+log:
+  loglevel: warning
+
+routing:
+  domainStrategy: IPIfNonMatch
+  rules:
+    - type: field
+      ip:
+        - geoip:cn
+      outboundTag: block
+    - type: field
+      domain:
+        - domain:reddit.com
+        - domain:imgur.com
+        - domain:chatgpt.com
+      outboundTag: cfwg
+
+inbounds:
+  # vless reality
+  - listen: 127.0.0.1
+    port: 9000
+    protocol: vless
+    settings:
+      clients:
+        - id: __XRAY_UUID__
+          flow: xtls-rprx-vision
+      decryption: none
+      fallbacks:
+        - dest: 9001 # to xhttp-reality
+          xver: 0
+    streamSettings:
+      network: raw
+      security: reality
+      realitySettings:
+        show: false
+        target: 9443 # steal oneself
+        xver: 1
+        serverNames:
+          - __SITE_DOMAIN__
+        privateKey: __XRAY_PRIVATE_KEY__
+        shortIds:
+          - __XRAY_SHORT__
+      tcpSettings:
+        acceptProxyProtocol: true
+    sniffing:
+      enabled: true
+      destOverride:
+        - http
+        - tls
+        - quic
+      routeOnly: true
+
+  # xhttp reality
+  - listen: 127.0.0.1
+    port: 9001
+    protocol: vless
+    settings:
+      clients:
+        - id: __XRAY_UUID__
+      decryption: none
+    streamSettings:
+      network: xhttp
+      xhttpSettings:
+        path: /api/v1/stream
+        mode: auto
+    sockopt:
+      acceptProxyProtocol: false
+    sniffing:
+      enabled: true
+      destOverride:
+        - http
+        - tls
+        - quic
+      routeOnly: true
+
+outbounds:
+  - tag: direct
+    protocol: freedom
+    
+  - tag: block
+    protocol: blackhole
+
+  # cfwg
+  - tag: cfwg
+    protocol: socks
+    settings:
+      servers:
+        - address: 127.0.0.1
+          port: 40000
+          users: []
