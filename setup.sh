@@ -99,6 +99,12 @@ install_deps() {
   fi
 }
 
+enable_bbr() {
+  echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+  echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+  sysctl -p
+}
+
 install_xray() {
   if ! command -v xray >/dev/null 2>&1; then
     bash -c "$(curl -fsSL https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install
@@ -190,6 +196,7 @@ main() {
     all)
       check_inputs
       install_deps
+      enable_bbr
       install_xray
       issue_cert
       render_and_start
