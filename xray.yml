@@ -15,6 +15,11 @@ routing:
         - domain:imgur.com
         - domain:chatgpt.com
       outboundTag: cfwg
+    - type: field
+      domain:
+        - geosite:google
+        - geosite:category-game
+      outboundTag: forward
 
 inbounds:
   # vless reality
