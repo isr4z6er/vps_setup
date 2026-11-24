@@ -89,3 +89,24 @@ outbounds:
         - address: 127.0.0.1
           port: 40000
           users: []
+          
+  # forward to other xray
+  - tag: forward
+    protocol: vless
+    settings:
+      vnext:
+        - address: __XRAY_FORWARD_ADDR__
+          port: 443
+          users:
+            - id: __XRAY_FORWARD_UUID__
+              encryption: none
+              flow: xtls-rprx-vision
+    streamSettings:
+      network: raw
+      security: reality
+      realitySettings:
+        show: false
+        serverName: __XRAY_FORWARD_DOMAIN__
+        publicKey: __XRAY_FORWARD_PUBLIC_KEY__
+        shortId: __XRAY_FORWARD_SHORT_ID__
+        fingerprint: chrome
