@@ -183,6 +183,9 @@ usage() {
 
 说明:
   all   完整安装依赖、Xray、签发证书并启动 Nginx 与 Xray（默认）
+  install_deps  安装依赖
+  enable_bbr  启用 BBR 拥塞控制算法
+  issue_cert  签发 SSL 证书
   xray  根据当前 .env 重新替换 xray.yml 占位符、校验并重启 xray
   nginx  根据当前 .env 重新替换 nginx.conf 占位符、校验并重启 nginx
 EOF
@@ -197,9 +200,18 @@ main() {
       check_inputs
       install_deps
       enable_bbr
-      install_xray
       issue_cert
+      install_xray
       render_and_start
+      ;;
+    install_deps)
+      install_deps
+      ;;
+    enable_bbr)
+      enable_bbr
+      ;;
+    issue_cert)
+      issue_cert
       ;;
     xray)
       render_xray_only
