@@ -69,8 +69,8 @@ inbounds:
       xhttpSettings:
         path: /api/v1/stream
         mode: auto
-    sockopt:
-      acceptProxyProtocol: false
+      sockopt:
+        acceptProxyProtocol: false
     sniffing:
       enabled: true
       destOverride:
